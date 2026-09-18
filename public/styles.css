@@ -647,7 +647,7 @@ body { isolation: isolate; }
 body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 25%, var(--celebration-color, #b060ff), transparent 85%); }
 body[data-celebration="purple"] { --celebration-color: #9229dd; }
 body[data-celebration="blue"] { --celebration-color: #126fe0; }
-body[data-celebration="green"] { --celebration-color: #07834c; }
+body[data-celebration="green"] { --celebration-color: #064e3b; }
 body[data-celebration="streak"] { --celebration-color: #c66412; }
 body.celebrating::before { animation: celebration-pulse 1.2s ease-in-out 3; }
 @keyframes celebration-pulse { 0%,100% { opacity: 0; } 50% { opacity: .65; } }
