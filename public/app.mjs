@@ -57,6 +57,7 @@ let attemptStart = 0;
 let timerInterval;
 let pulseTimeout;
 let dancerTimeout;
+let discoTimeout;
 let dancer;
 
 function startTimer() {
@@ -85,12 +86,22 @@ function dancingGuest(kind) {
   dancer.className = `dancing-guest ${kind}`;
   dancer.setAttribute("aria-hidden", "true");
   const character = document.createElement("span");
-  character.textContent = kind === "ghoul" ? "👻" : "🦆";
+  const image = document.createElement("img");
+  image.src = kind === "ghoul" ? "./ghoul.png" : "./disco-duck.png";
+  image.alt = "";
+  image.draggable = false;
+  character.append(image);
   const caption = document.createElement("small");
-  caption.textContent = kind === "ghoul" ? "Boo-gie time!" : "Disco duck approves.";
+  caption.textContent = kind === "ghoul" ? "Sneaking into first place…" : "Disco Duck!";
   dancer.append(character, caption);
   document.body.append(dancer);
-  dancerTimeout = setTimeout(() => { dancer?.remove(); dancer = null; }, 3600);
+  clearTimeout(discoTimeout);
+  document.body.classList.remove("disco-party");
+  if (kind === "duck") {
+    document.body.classList.add("disco-party");
+    discoTimeout = setTimeout(() => document.body.classList.remove("disco-party"), 7000);
+  }
+  dancerTimeout = setTimeout(() => { dancer?.remove(); dancer = null; }, 7000);
 }
 
 elements.explainMisses.checked = Boolean(preferences.explainMisses);

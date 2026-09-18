@@ -21,12 +21,12 @@ export function accuracyPercent(stats) {
 }
 
 export const SPEED_RANKS = Object.freeze([
-  { limit: 5, name: "Ghoul-speed", color: "purple" },
-  { limit: 15, name: "Disco rocket", color: "blue" },
-  { limit: 25, name: "Lightning", color: "green" },
-  { limit: 40, name: "Quick thinker" },
-  { limit: 55, name: "Sharp calculator" },
-  { limit: 75, name: "Steady solver" },
+  { limit: 10, name: "Ghoul-speed", color: "purple" },
+  { limit: 25, name: "Disco Duck", color: "blue" },
+  { limit: 40, name: "Lightning", color: "green" },
+  { limit: 55, name: "Quick thinker" },
+  { limit: 75, name: "Sharp calculator" },
+  { limit: 95, name: "Steady solver" },
   { limit: 120, name: "Patient puzzler" },
   { limit: Infinity, name: "Scenic route" },
 ]);

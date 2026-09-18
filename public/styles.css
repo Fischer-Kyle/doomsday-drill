@@ -661,3 +661,32 @@ body.celebrating::before { animation: celebration-pulse 1.2s ease-in-out 3; }
   .dancing-guest { animation: none; left: auto; right: 20px; }
   .dancing-guest span { animation: none; }
 }
+
+/* Larger character parades stay within the screen. */
+.dancing-guest { top: 10px; bottom: auto; width: clamp(100px, 20vw, 190px); animation: character-parade 7s linear forwards; }
+.dancing-guest span { font-size: inherit; }
+.dancing-guest img { display: block; width: 100%; height: auto; filter: drop-shadow(0 8px 14px rgba(0,0,0,.3)); }
+.dancing-guest small { white-space: normal; }
+.dancing-guest.ghoul span { animation: sneaky-step .8s ease-in-out infinite; }
+@keyframes character-parade {
+  0% { transform: translate(-110%, 10px); opacity: 0; }
+  8% { transform: translate(12px, 10px); opacity: 1; }
+  30% { transform: translate(calc(100vw - 100% - 12px), 10px); }
+  50% { transform: translate(calc(100vw - 100% - 12px), calc(100dvh - 100% - 28px)); }
+  75% { transform: translate(12px, calc(100dvh - 100% - 28px)); }
+  92% { transform: translate(12px, 10px); opacity: 1; }
+  100% { transform: translate(-110%, 10px); opacity: 0; }
+}
+@keyframes sneaky-step {
+  0%,100% { transform: translateY(0) rotate(-9deg); }
+  35% { transform: translateY(-9px) rotate(5deg); }
+  70% { transform: translateY(-3px) rotate(-4deg); }
+}
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: -1; opacity: 0; background: conic-gradient(from 20deg at 15% 0%, transparent 0deg 15deg, #3864e8 15deg 32deg, transparent 32deg 75deg, #b932c7 75deg 94deg, transparent 94deg 160deg, #168773 160deg 185deg, transparent 185deg 245deg, #b88424 245deg 270deg, transparent 270deg); }
+body.disco-party::after { animation: disco-lights 2s ease-in-out infinite; }
+@keyframes disco-lights { 0%,100% { opacity: .12; filter: hue-rotate(0deg); } 50% { opacity: .38; filter: hue-rotate(90deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .dancing-guest { top: auto; bottom: 20px; left: auto; right: 20px; animation: none; }
+  .dancing-guest.ghoul span { animation: none; }
+  body.disco-party::after { animation: none; opacity: .15; }
+}
