@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A fast Doomsday algorithm trainer for dates from 1900 through 2099."
+    />
+    <meta name="theme-color" content="#111c35" />
+    <title>Doomsday Drill</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="Doomsday Drill home">
+          <span class="brand-mark" aria-hidden="true">D</span>
+          <span>
+            <strong>Doomsday Drill</strong>
+            <small>1900–2099 · Gregorian</small>
+          </span>
+        </a>
+
+        <div class="header-stats" aria-label="Practice statistics">
+          <div>
+            <span id="header-accuracy">—</span>
+            <small>accuracy</small>
+          </div>
+          <div>
+            <span id="header-streak">0</span>
+            <small>streak</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="practice-card" aria-labelledby="prompt">
+        <div class="card-heading">
+          <span class="eyebrow" id="round-label">Ready to calculate?</span>
+          <button
+            class="icon-button"
+            id="settings-button"
+            type="button"
+            aria-expanded="false"
+            aria-controls="settings-panel"
+            aria-label="Open practice settings"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 15.4a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8Z" />
+              <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.57V21h-4v-.08A1.7 1.7 0 0 0 8.96 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.57-1.03H3v-4h.08A1.7 1.7 0 0 0 4.6 8.96a1.7 1.7 0 0 0-.34-1.88L4.2 7.02 7.03 4.2l.06.06a1.7 1.7 0 0 0 1.88.34A1.7 1.7 0 0 0 10 3.03V3h4v.08a1.7 1.7 0 0 0 1.03 1.53 1.7 1.7 0 0 0 1.88-.34l.06-.06 2.83 2.83-.06.06a1.7 1.7 0 0 0-.34 1.88A1.7 1.7 0 0 0 20.97 10H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="date-block">
+          <p id="prompt">What day of the week was</p>
+          <h1 id="practice-date" aria-live="polite">September 18, 2026?</h1>
+        </div>
+
+        <div class="weekday-grid" id="weekday-grid" role="group" aria-label="Choose a weekday">
+          <button type="button" data-day="0"><kbd>1</kbd><span>Sunday</span></button>
+          <button type="button" data-day="1"><kbd>2</kbd><span>Monday</span></button>
+          <button type="button" data-day="2"><kbd>3</kbd><span>Tuesday</span></button>
+          <button type="button" data-day="3"><kbd>4</kbd><span>Wednesday</span></button>
+          <button type="button" data-day="4"><kbd>5</kbd><span>Thursday</span></button>
+          <button type="button" data-day="5"><kbd>6</kbd><span>Friday</span></button>
+          <button type="button" data-day="6"><kbd>7</kbd><span>Saturday</span></button>
+        </div>
+
+        <div class="feedback" id="feedback" aria-live="polite" hidden>
+          <div class="feedback-summary">
+            <span class="result-icon" id="result-icon" aria-hidden="true"></span>
+            <div>
+              <strong id="result-title"></strong>
+              <p id="result-detail"></p>
+            </div>
+          </div>
+
+          <button class="steps-toggle" id="steps-toggle" type="button" aria-expanded="false" hidden>
+            Show calculation
+          </button>
+          <ol class="calculation" id="calculation" hidden></ol>
+
+          <button class="next-button" id="next-button" type="button">
+            Next date <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <p class="keyboard-hint" id="keyboard-hint">Use keys 1–7 to answer</p>
+      </section>
+
+      <section class="session-strip" aria-label="Session progress">
+        <div class="session-stat">
+          <span id="total-correct">0</span>
+          <small>correct</small>
+        </div>
+        <div class="session-stat">
+          <span id="total-attempted">0</span>
+          <small>attempted</small>
+        </div>
+        <div class="session-stat">
+          <span id="best-streak">0</span>
+          <small>best streak</small>
+        </div>
+        <div class="session-meter" aria-hidden="true">
+          <span id="accuracy-meter"></span>
+        </div>
+      </section>
+
+      <aside class="settings-panel" id="settings-panel" hidden>
+        <div>
+          <strong>Practice settings</strong>
+          <p>Your progress stays on this device.</p>
+        </div>
+        <label class="switch-row">
+          <span>
+            <strong>Explain misses</strong>
+            <small>Open the calculation automatically</small>
+          </span>
+          <input id="explain-misses" type="checkbox" checked />
+          <span class="switch" aria-hidden="true"></span>
+        </label>
+        <button class="reset-button" id="reset-stats" type="button">Reset stats</button>
+      </aside>
+    </main>
+
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

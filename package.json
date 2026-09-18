@@ -1,0 +1,8 @@
+{
+  "name": "doomsday-drill",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/doomsday.test.mjs && node tests/interactions.test.mjs"
+  }
+}
