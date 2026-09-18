@@ -5,12 +5,17 @@ import {
   formatDate,
   randomDate,
 } from "./doomsday.mjs";
-import { DEFAULT_STATS, accuracyPercent, recordAttempt } from "./practice.mjs";
+import { DEFAULT_STATS, accuracyPercent, recordAttempt, speedRank, formatAttemptTime } from "./practice.mjs";
 
 const STORAGE_KEY = "doomsday-drill-stats-v1";
 const PREFS_KEY = "doomsday-drill-prefs-v1";
 
 const elements = {
+  timedMode: document.querySelector("#timed-mode"),
+  timer: document.querySelector("#attempt-timer"),
+  resultTime: document.querySelector("#result-time"),
+  rank: document.querySelector("#speed-rank"),
+  streakLabel: document.querySelector("#streak-label"),
   date: document.querySelector("#practice-date"),
   roundLabel: document.querySelector("#round-label"),
   grid: document.querySelector("#weekday-grid"),
@@ -47,6 +52,46 @@ let stats = readJson(STORAGE_KEY, DEFAULT_STATS);
 const preferences = readJson(PREFS_KEY, { explainMisses: true });
 let currentDate = null;
 let answered = false;
+let timedMode = false;
+let attemptStart = 0;
+let timerInterval;
+let pulseTimeout;
+let dancerTimeout;
+let dancer;
+
+function startTimer() {
+  clearInterval(timerInterval);
+  attemptStart = performance.now();
+  elements.timer.hidden = !timedMode;
+  elements.timer.textContent = "0.0s";
+  if (timedMode) timerInterval = setInterval(() => {
+    elements.timer.textContent = formatAttemptTime((performance.now() - attemptStart) / 1000);
+  }, 100);
+}
+
+function pulseScreen(color) {
+  clearTimeout(pulseTimeout);
+  document.body.classList.remove("celebrating");
+  document.body.dataset.celebration = color;
+  void document.body.offsetWidth;
+  document.body.classList.add("celebrating");
+  pulseTimeout = setTimeout(() => document.body.classList.remove("celebrating"), 3600);
+}
+
+function dancingGuest(kind) {
+  clearTimeout(dancerTimeout);
+  dancer?.remove();
+  dancer = document.createElement("div");
+  dancer.className = `dancing-guest ${kind}`;
+  dancer.setAttribute("aria-hidden", "true");
+  const character = document.createElement("span");
+  character.textContent = kind === "ghoul" ? "👻" : "🦆";
+  const caption = document.createElement("small");
+  caption.textContent = kind === "ghoul" ? "Boo-gie time!" : "Disco duck approves.";
+  dancer.append(character, caption);
+  document.body.append(dancer);
+  dancerTimeout = setTimeout(() => { dancer?.remove(); dancer = null; }, 3600);
+}
 
 elements.explainMisses.checked = Boolean(preferences.explainMisses);
 
@@ -58,6 +103,8 @@ function renderStats() {
   const accuracy = accuracyPercent(stats);
   elements.headerAccuracy.textContent = accuracy === null ? "—" : `${accuracy}%`;
   elements.headerStreak.textContent = String(stats.currentStreak);
+  elements.headerStreak.parentElement.classList.toggle("streak-active", stats.currentStreak >= 3);
+  elements.streakLabel.textContent = stats.currentStreak >= 3 ? "On fire!" : "streak";
   elements.totalCorrect.textContent = String(stats.correct);
   elements.totalAttempted.textContent = String(stats.attempted);
   elements.bestStreak.textContent = String(stats.bestStreak);
@@ -88,6 +135,8 @@ function newRound() {
   elements.roundLabel.textContent = stats.attempted
     ? `Drill ${stats.attempted + 1}`
     : "Ready to calculate?";
+  elements.resultTime.hidden = true;
+  elements.rank.hidden = true;
   elements.feedback.hidden = true;
   elements.feedback.className = "feedback";
   elements.stepsToggle.hidden = true;
@@ -96,9 +145,10 @@ function newRound() {
     button.disabled = false;
     button.classList.remove("is-correct", "is-wrong");
   });
-  elements.keyboardHint.textContent = "Use keys 1–7 to answer";
+  elements.keyboardHint.textContent = "Use keys 0–6 to answer";
   window.scrollTo({ top: 0, behavior: "smooth" });
   elements.weekdayButtons[0].focus({ preventScroll: true });
+  startTimer();
 }
 
 let stopConfetti = () => {};
@@ -180,6 +230,9 @@ function celebrateCorrectAnswer() {
 function submitAnswer(chosenDay) {
   if (answered) return;
   answered = true;
+  const seconds = (performance.now() - attemptStart) / 1000;
+  clearInterval(timerInterval);
+  if (timedMode) elements.timer.textContent = formatAttemptTime(seconds);
 
   const calculation = doomsdayCalculation(currentDate.year, currentDate.month, currentDate.day);
   const correctDay = calculation.answer;
@@ -211,8 +264,32 @@ function submitAnswer(chosenDay) {
   setCalculation(!isCorrect && elements.explainMisses.checked);
   elements.keyboardHint.textContent = "Press Enter for the next date";
   elements.nextButton.focus({ preventScroll: true });
-  if (isCorrect) celebrateCorrectAnswer();
+  if (timedMode) {
+    elements.resultTime.hidden = false;
+    elements.resultTime.textContent = formatAttemptTime(seconds);
+  }
+  if (isCorrect) {
+    celebrateCorrectAnswer();
+    const rank = timedMode ? speedRank(seconds) : null;
+    if (rank) {
+      elements.rank.hidden = false;
+      elements.rank.textContent = rank.name;
+      elements.rank.dataset.color = rank.color || "neutral";
+    }
+    if (rank?.color) pulseScreen(rank.color);
+    else if (stats.currentStreak === 3) pulseScreen("streak");
+    if (rank?.color === "purple") dancingGuest("ghoul");
+    else if (rank?.color === "blue") dancingGuest("duck");
+  }
 }
+
+elements.timedMode.addEventListener("click", () => {
+  timedMode = !timedMode;
+  elements.timedMode.setAttribute("aria-pressed", String(timedMode));
+  elements.timedMode.textContent = `Timed mode: ${timedMode ? "On" : "Off"}`;
+  // Switching modes starts a fresh date, so the clock always measures a full attempt.
+  newRound();
+});
 
 elements.grid.addEventListener("click", (event) => {
   const button = event.target.closest("[data-day]");
@@ -253,14 +330,16 @@ elements.resetStats.addEventListener("click", () => {
 document.addEventListener("keydown", (event) => {
   if (event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
 
+  if (event.target?.matches("input, textarea, select, [contenteditable=true]")) return;
   const keyNumber = Number(event.key);
-  if (!answered && keyNumber >= 1 && keyNumber <= 7) {
+  if (!answered && /^[0-6]$/.test(event.key)) {
     event.preventDefault();
-    submitAnswer(keyNumber - 1);
+    submitAnswer(keyNumber);
     return;
   }
 
-  if (answered && (event.key === "Enter" || event.key === " ")) {
+  if (answered && (event.key === "Enter" || event.key === " ") &&
+      (event.target === elements.nextButton || event.target === document.body)) {
     event.preventDefault();
     newRound();
   }

@@ -29,7 +29,7 @@
           </div>
           <div>
             <span id="header-streak">0</span>
-            <small>streak</small>
+            <small id="streak-label">streak</small>
           </div>
         </div>
       </header>
@@ -52,26 +52,30 @@
           </button>
         </div>
 
+        <div class="timing-toolbar">
+          <button id="timed-mode" class="timed-mode" type="button" aria-pressed="false">Timed mode: Off</button>
+          <span id="attempt-timer" class="attempt-timer" hidden aria-label="Elapsed attempt time">0.0s</span>
+        </div>
         <div class="date-block">
           <p id="prompt">What day of the week was</p>
           <h1 id="practice-date" aria-live="polite">September 18, 2026?</h1>
         </div>
 
         <div class="weekday-grid" id="weekday-grid" role="group" aria-label="Choose a weekday">
-          <button type="button" data-day="0"><kbd>1</kbd><span>Sunday</span></button>
-          <button type="button" data-day="1"><kbd>2</kbd><span>Monday</span></button>
-          <button type="button" data-day="2"><kbd>3</kbd><span>Tuesday</span></button>
-          <button type="button" data-day="3"><kbd>4</kbd><span>Wednesday</span></button>
-          <button type="button" data-day="4"><kbd>5</kbd><span>Thursday</span></button>
-          <button type="button" data-day="5"><kbd>6</kbd><span>Friday</span></button>
-          <button type="button" data-day="6"><kbd>7</kbd><span>Saturday</span></button>
+          <button type="button" data-day="0"><kbd>0</kbd><span>Sunday</span></button>
+          <button type="button" data-day="1"><kbd>1</kbd><span>Monday</span></button>
+          <button type="button" data-day="2"><kbd>2</kbd><span>Tuesday</span></button>
+          <button type="button" data-day="3"><kbd>3</kbd><span>Wednesday</span></button>
+          <button type="button" data-day="4"><kbd>4</kbd><span>Thursday</span></button>
+          <button type="button" data-day="5"><kbd>5</kbd><span>Friday</span></button>
+          <button type="button" data-day="6"><kbd>6</kbd><span>Saturday</span></button>
         </div>
 
         <div class="feedback" id="feedback" aria-live="polite" hidden>
           <div class="feedback-summary">
             <span class="result-icon" id="result-icon" aria-hidden="true"></span>
             <div>
-              <strong id="result-title"></strong>
+              <div class="result-line"><strong id="result-title"></strong><span id="result-time" class="result-time" hidden></span><span id="speed-rank" class="speed-rank" hidden></span></div>
               <p id="result-detail"></p>
             </div>
           </div>
@@ -86,7 +90,7 @@
           </button>
         </div>
 
-        <p class="keyboard-hint" id="keyboard-hint">Use keys 1–7 to answer</p>
+        <p class="keyboard-hint" id="keyboard-hint">Use keys 0–6 to answer</p>
       </section>
 
       <section class="session-strip" aria-label="Session progress">

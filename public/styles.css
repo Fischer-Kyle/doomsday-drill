@@ -629,3 +629,35 @@ button {
     transition: none !important;
   }
 }
+
+/* Timed drills and celebrations */
+.timing-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 14px 0 0; }
+.timed-mode { font-size: .875rem; border: 1px solid var(--panel-border); border-radius: 999px; padding: 8px 12px; background: transparent; cursor: pointer; color: var(--muted); }
+.timed-mode[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); background: rgba(49,203,176,.08); }
+.attempt-timer { color: var(--muted); font-size: .875rem; font-variant-numeric: tabular-nums; min-width: 4rem; text-align: right; }
+.result-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.result-time { font-size: .875rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.speed-rank { font-size: .875rem; border-radius: 999px; padding: 4px 10px; background: rgba(255,255,255,.08); }
+.speed-rank[data-color="purple"] { color: #dab5ff; }
+.speed-rank[data-color="blue"] { color: #9ecbff; }
+.speed-rank[data-color="green"] { color: #8ff0bb; }
+.header-stats .streak-active { color: #ffd166; border-radius: 12px; background: rgba(255,168,43,.15); box-shadow: 0 0 20px rgba(255,168,43,.18); padding: 6px 10px; }
+.header-stats .streak-active small { color: #ffd166; }
+body { isolation: isolate; }
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; background: radial-gradient(ellipse at 50% 25%, var(--celebration-color, #b060ff), transparent 85%); }
+body[data-celebration="purple"] { --celebration-color: #9229dd; }
+body[data-celebration="blue"] { --celebration-color: #126fe0; }
+body[data-celebration="green"] { --celebration-color: #07834c; }
+body[data-celebration="streak"] { --celebration-color: #c66412; }
+body.celebrating::before { animation: celebration-pulse 1.2s ease-in-out 3; }
+@keyframes celebration-pulse { 0%,100% { opacity: 0; } 50% { opacity: .65; } }
+.dancing-guest { position: fixed; left: 0; bottom: max(24px, env(safe-area-inset-bottom)); z-index: 1001; pointer-events: none; text-align: center; animation: dance-across 3.6s linear forwards; }
+.dancing-guest span { display: block; font-size: clamp(3rem, 9vw, 5rem); animation: boogie .6s ease-in-out infinite; }
+.dancing-guest small { display: block; color: #fff; background: #182441; padding: 6px 10px; border-radius: 12px; font-size: .875rem; white-space: nowrap; }
+@keyframes dance-across { from { transform: translateX(-110%); } to { transform: translateX(100vw); } }
+@keyframes boogie { 0%,100% { transform: rotate(-15deg) translateY(0); } 50% { transform: rotate(15deg) translateY(-20px); } }
+@media (prefers-reduced-motion: reduce) {
+  body.celebrating::before { animation: none; opacity: .2; }
+  .dancing-guest { animation: none; left: auto; right: 20px; }
+  .dancing-guest span { animation: none; }
+}
